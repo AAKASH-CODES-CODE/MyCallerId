@@ -1,23 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Location: <YourProject>/app/src/main/AndroidManifest.xml -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.mycallerid">
 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <!-- Required permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
 
-    <!-- Optional: declare as a dialer app -->
-    <uses-permission android:name="android.permission.CALL_PHONE" />
-
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="My Caller ID"
         android:supportsRtl="true"
-        android:theme="@style/Theme.CallerID">
-
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -26,7 +18,5 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
-
 </manifest>
