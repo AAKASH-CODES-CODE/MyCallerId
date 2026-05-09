@@ -14,6 +14,15 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    
+    // YAHAN FIX HAI: Java aur Kotlin dono ko Version 17 par set kar diya
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
 }
 
 dependencies {
@@ -22,6 +31,6 @@ dependencies {
     implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     
-    // Direct stable version
+    // Firebase Realtime Database
     implementation 'com.google.firebase:firebase-database-ktx:20.3.0'
 }
