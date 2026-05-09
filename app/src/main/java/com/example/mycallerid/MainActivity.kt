@@ -18,6 +18,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Ye line design file wale btnSync ko dhoondhegi
         val btnSync = findViewById<Button>(R.id.btnSync)
 
         btnSync.setOnClickListener {
