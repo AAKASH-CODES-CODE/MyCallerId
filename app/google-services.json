@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "63943402474",
+    "firebase_url": "https://admin-panel-a6e8e-default-rtdb.firebaseio.com",
+    "project_id": "admin-panel-a6e8e",
+    "storage_bucket": "admin-panel-a6e8e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:63943402474:android:bc2fc71f9cfa5bc7270893",
+        "android_client_info": {
+          "package_name": "com.example.mycallerid"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCZ3x6YGvEDeTxPVb_ulS7C-TVQaJugcac"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
