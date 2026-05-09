@@ -19,7 +19,7 @@ jobs:
 
     - name: Setup & Build APK
       run: |
-        gradle wrapper
+        gradle wrapper --gradle-version 8.2
         ./gradlew assembleDebug
 
     - name: Upload APK
