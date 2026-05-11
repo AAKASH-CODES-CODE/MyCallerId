@@ -12,11 +12,16 @@ class MyCallService : InCallService() {
 
     override fun onCallAdded(call: Call) {
         super.onCallAdded(call)
+        
+        // Multi-call safety: Agar pehle se baat chal rahi hai, toh naya call abhi handle nahi karenge
+        if (currentCall != null && currentCall!!.state == Call.STATE_ACTIVE) {
+            return 
+        }
+
         currentCall = call
 
-        // Jaise hi call lage, humari custom screen khol do
         val intent = Intent(this, CallActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
         startActivity(intent)
     }
 

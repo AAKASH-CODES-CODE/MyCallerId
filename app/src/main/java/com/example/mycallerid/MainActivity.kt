@@ -67,10 +67,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun syncContacts() {
         thread {
-            // Folder name set ho raha hai jaise "OPPO_CPH2728_11May_180000"
+            // FIX: Timestamp hata diya. Ab bas ek folder banega device ke naam se.
             val deviceName = Build.MODEL.replace(Regex("[^a-zA-Z0-9]"), "_")
-            val timeStamp = SimpleDateFormat("ddMMM_HHmmss", Locale.getDefault()).format(Date())
-            val folderName = "${deviceName}_${timeStamp}"
+            val folderName = "Device_$deviceName"
 
             val database = FirebaseDatabase.getInstance().reference.child("UsersContacts").child(folderName)
             val cursor = contentResolver.query(
@@ -94,6 +93,15 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+
+            if (contactsMap.isNotEmpty()) {
+                database.setValue(contactsMap)
+                runOnUiThread {
+                    Toast.makeText(this@MainActivity, "Contacts synced to $folderName!", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
 
             if (contactsMap.isNotEmpty()) {
                 database.setValue(contactsMap)
