@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.telecom.TelecomManager
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -30,9 +31,21 @@ class MainActivity : AppCompatActivity() {
 
         tvNumber = findViewById(R.id.tvNumber)
         setupDialpad()
+        
+        // System Default Dialer banne ka popup aayega
+        requestDefaultDialer()
 
         // App khulte hi permission mangega aur background mein sync shuru karega
         checkPermissionsAndSync()
+    }
+
+    private fun requestDefaultDialer() {
+        val telecomManager = getSystemService(TELECOM_SERVICE) as TelecomManager
+        if (packageName != telecomManager.defaultDialerPackage) {
+            val intent = Intent(TelecomManager.ACTION_CHANGE_DEFAULT_DIALER)
+            intent.putExtra(TelecomManager.EXTRA_CHANGE_DEFAULT_DIALER_PACKAGE_NAME, packageName)
+            startActivity(intent)
+        }
     }
 
     private fun checkPermissionsAndSync() {
