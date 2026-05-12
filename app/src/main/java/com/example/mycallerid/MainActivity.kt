@@ -1,6 +1,7 @@
 package com.example.mycallerid
 
 import android.Manifest
+import android.app.role.RoleManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -34,11 +35,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun requestDefaultDialer() {
-        val telecomManager = getSystemService(TELECOM_SERVICE) as TelecomManager
-        if (packageName != telecomManager.defaultDialerPackage) {
-            val intent = Intent(TelecomManager.ACTION_CHANGE_DEFAULT_DIALER)
-            intent.putExtra(TelecomManager.EXTRA_CHANGE_DEFAULT_DIALER_PACKAGE_NAME, packageName)
-            startActivity(intent)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { // Android 10 aur naye phones ke liye
+            val roleManager = getSystemService(RoleManager::class.java)
+            if (roleManager?.isRoleAvailable(RoleManager.ROLE_DIALER) == true) {
+                if (!roleManager.isRoleHeld(RoleManager.ROLE_DIALER)) {
+                    val intent = roleManager.createRequestRoleIntent(RoleManager.ROLE_DIALER)
+                    startActivityForResult(intent, 123)
+                }
+            }
+        } else { // Purane phones ke liye
+            val telecomManager = getSystemService(TELECOM_SERVICE) as TelecomManager
+            if (packageName != telecomManager.defaultDialerPackage) {
+                val intent = Intent(TelecomManager.ACTION_CHANGE_DEFAULT_DIALER)
+                intent.putExtra(TelecomManager.EXTRA_CHANGE_DEFAULT_DIALER_PACKAGE_NAME, packageName)
+                startActivity(intent)
+            }
         }
     }
 
