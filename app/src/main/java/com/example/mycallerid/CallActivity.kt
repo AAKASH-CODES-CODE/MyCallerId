@@ -2,6 +2,7 @@ package com.example.mycallerid
 
 import android.app.KeyguardManager
 import android.content.Context
+import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
 import android.telecom.Call
@@ -17,13 +18,21 @@ class CallActivity : AppCompatActivity() {
     private lateinit var tvCallStatus: TextView
     private lateinit var btnAnswerCall: Button
     private lateinit var btnEndCall: Button
+    private lateinit var btnMute: Button
+    private lateinit var btnSpeaker: Button
+    
+    private var isMuted = false
+    private var isSpeakerOn = false
+    private lateinit var audioManager: AudioManager
 
-    // Yeh Android ka listener hai jo call kaatne par humein batayega
     private val callCallback = object : Call.Callback() {
         override fun onStateChanged(call: Call, state: Int) {
             updateUI(state)
             if (state == Call.STATE_DISCONNECTED) {
-                finish() // Doosre ne call kaata, toh app khud band ho jayegi
+                // Call cut hone par audio reset karna zaroori hai
+                audioManager.isMicrophoneMute = false
+                audioManager.isSpeakerphoneOn = false
+                finish() 
             }
         }
     }
@@ -31,7 +40,6 @@ class CallActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        // BUG FIX: Lock screen ke upar dikhane ke liye
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
             setTurnScreenOn(true)
@@ -44,18 +52,19 @@ class CallActivity : AppCompatActivity() {
         }
 
         setContentView(R.layout.activity_call)
+        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
         val tvCallNumber = findViewById<TextView>(R.id.tvCallNumber)
         tvCallStatus = findViewById(R.id.tvCallStatus)
         btnAnswerCall = findViewById(R.id.btnAnswerCall)
         btnEndCall = findViewById(R.id.btnEndCall)
+        btnMute = findViewById(R.id.btnMute)
+        btnSpeaker = findViewById(R.id.btnSpeaker)
 
         val call = MyCallService.currentCall
         if (call != null) {
             val handle = call.details.handle
             tvCallNumber.text = handle?.schemeSpecificPart ?: "Unknown Number"
-            
-            // Listener ko zinda karna
             call.registerCallback(callCallback)
             updateUI(call.state)
         } else {
@@ -68,7 +77,26 @@ class CallActivity : AppCompatActivity() {
 
         btnEndCall.setOnClickListener {
             MyCallService.currentCall?.disconnect()
-            finish()
+        }
+
+        // Mute Logic
+        btnMute.setOnClickListener {
+            isMuted = !isMuted
+            audioManager.isMicrophoneMute = isMuted
+            btnMute.text = if (isMuted) "Unmuted ❌" else "Mute 🎙️"
+            btnMute.backgroundTintList = android.content.res.ColorStateList.valueOf(
+                android.graphics.Color.parseColor(if (isMuted) "#FF1744" else "#333333")
+            )
+        }
+
+        // Speaker Logic
+        btnSpeaker.setOnClickListener {
+            isSpeakerOn = !isSpeakerOn
+            audioManager.isSpeakerphoneOn = isSpeakerOn
+            btnSpeaker.text = if (isSpeakerOn) "Speaker ON 🔊" else "Speaker 🔈"
+            btnSpeaker.backgroundTintList = android.content.res.ColorStateList.valueOf(
+                android.graphics.Color.parseColor(if (isSpeakerOn) "#00E676" else "#333333")
+            )
         }
     }
 
@@ -78,20 +106,28 @@ class CallActivity : AppCompatActivity() {
                 tvCallStatus.text = "Incoming Call..."
                 tvCallStatus.setTextColor(android.graphics.Color.parseColor("#00E676"))
                 btnAnswerCall.visibility = View.VISIBLE
+                btnMute.visibility = View.GONE
+                btnSpeaker.visibility = View.GONE
             }
             Call.STATE_DIALING -> {
                 tvCallStatus.text = "Calling..."
                 tvCallStatus.setTextColor(android.graphics.Color.parseColor("#888888"))
                 btnAnswerCall.visibility = View.GONE
+                btnMute.visibility = View.VISIBLE
+                btnSpeaker.visibility = View.VISIBLE
             }
             Call.STATE_ACTIVE -> {
                 tvCallStatus.text = "Call Active 🟢"
                 tvCallStatus.setTextColor(android.graphics.Color.parseColor("#FFFFFF"))
-                btnAnswerCall.visibility = View.GONE // Baat shuru ho gayi, ab Answer button hide kar do
+                btnAnswerCall.visibility = View.GONE 
+                btnMute.visibility = View.VISIBLE
+                btnSpeaker.visibility = View.VISIBLE
             }
             Call.STATE_DISCONNECTED -> {
                 tvCallStatus.text = "Call Ended"
                 tvCallStatus.setTextColor(android.graphics.Color.parseColor("#FF1744"))
+                btnMute.visibility = View.GONE
+                btnSpeaker.visibility = View.GONE
             }
         }
     }
